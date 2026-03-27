@@ -1,0 +1,24 @@
+.menu-item {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #333;
+  border: 1px solid #ddd;
+  text-align: center;
+  transition: all 0.3s;
+  background-color: #fff;
+}
+
+.menu-item:hover {
+  background-color: #f8f9fa;
+}
+
+.menu-item.active {
+  background-color: #888;
+  color: white;
+}
+
+.menu-container {
+  max-width: 150px;
+  margin-left: 10px;
+}

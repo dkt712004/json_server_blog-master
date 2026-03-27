@@ -1,0 +1,51 @@
+<div class="container-fluid">
+  <h2 class="mb-4">List Blogs</h2>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle text-center shadow-sm">
+      <thead class="table-dark">
+      <tr>
+        <th style="width: 60px;">STT</th>
+        <th class="text-start">Tin</th>
+        <th style="width: 120px;">Loại</th>
+        <th style="width: 100px;">Trạng thái</th>
+        <th style="width: 180px;">Vị trí</th>
+        <th style="width: 120px;">Ngày public</th>
+        <th style="width: 90px;">Edit</th>
+        <th style="width: 90px;">Delete</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (item of listBlogs; track item.id; let i = $index) {
+          <tr>
+            <td class="fw-bold text-secondary">{{ i + 1 }}</td>
+
+            <td class="text-start">{{ item.title }}</td>
+            <td>
+              @switch (item.category) {
+                @case (0) { <span>Thời sự</span> }
+                @case (1) { <span>Thế giới</span> }
+                @default { <span>Khác</span> }
+              }
+            </td>
+            <td>{{ item.public ? 'Yes' : 'No' }}</td>
+            <td>{{ getPositionNames(item.position) }}</td>
+            <td>{{ item.data_pubblic }}</td>
+            <td>
+              <a [routerLink]="['/blogs/edit', item.id]" class="btn btn-sm btn-outline-primary">Edit</a>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-outline-danger" (click)="onDelete(item.id)">
+                Delete
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="8" class="text-center p-5 text-muted">Danh sách trống.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

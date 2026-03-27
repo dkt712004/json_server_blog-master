@@ -1,0 +1,61 @@
+<div class="card shadow-sm">
+  <div class="card-header bg-primary text-white">
+    <h3 class="mb-0">{{ isEditMode ? 'Edit Blog' : 'New Blogs' }}</h3>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="blogForm" (ngSubmit)="onSubmit()">
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Tiêu đề</label>
+        <input type="text" class="form-control" formControlName="title">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Mô tả ngắn</label>
+        <input type="text" class="form-control" formControlName="des">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Chi tiết</label>
+        <textarea class="form-control" rows="5" formControlName="detail"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Loại</label>
+        <select class="form-select" formControlName="category">
+          <option [value]="0">Thời sự</option>
+          <option [value]="1">Thế giới</option>
+          <option [value]="2">Kinh doanh</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Vị trí</label>
+<!--      loop: đặt tạm thời tên là pos cho mỗi phần tử lặp; track => ghi nhớ ô đã lặp  -->
+<!--        class="form-check": Class của Bootstrap để căn chỉnh ô tích và chữ nằm thẳng hàng.-->
+<!--        [value]="pos.id": Gán ID vào giá trị của ô checkbox.-->
+<!--        [checked]="isPosChecked(pos.id)": (thuộc Property Binding) Gọi hàm isPosChecked. Nếu hàm trả về true, ô này sẽ được tự động tích vào.-->
+<!--        (change)="onCheckboxChange($event)": (Event Binding) Khi người dùng click vào ô này => gọi hàm xử lý để thêm hoặc xóa ID đó khỏi danh sách dữ liệu gửi đi.-->
+        @for (pos of positionsData; track pos.id) {
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox"
+                   [value]="pos.id"
+                   [checked]="isPosChecked(pos.id)"
+                   (change)="onCheckboxChange($event)">
+            <label class="form-check-label">{{ pos.name }}</label>
+          </div>
+        }
+      </div>
+
+      <div class="mb-3 col-md-4">
+        <label class="form-label fw-bold">Date Public</label>
+        <input type="date" class="form-control" formControlName="data_pubblic">
+      </div>
+
+      <div class="mt-4">
+        <button type="submit" class="btn btn-success me-2">Submit</button>
+        <button type="button" class="btn btn-primary" (click)="blogForm.reset()">Clear</button>
+      </div>
+    </form>
+  </div>
+</div>
