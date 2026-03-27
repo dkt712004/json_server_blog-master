@@ -1,3 +1,4 @@
+// server Node.js có tác dụng render nhanh
 import {
   AngularNodeAppEngine,
   createNodeRequestHandler,
