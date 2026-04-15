@@ -1,8 +1,16 @@
 <nav class="navbar navbar-dark bg-primary shadow-sm py-2">
-  <div class="container-fluid d-flex align-items-center">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+
     <a routerLink="/blogs" class="navbar-brand d-flex align-items-center">
-      <img src="/logo digi.png" alt="Logo" class="logo-img me-2">
+      <img src="/logo digi.png" alt="Logo" class="logo-img me-2" style="height: 40px;">
       <span class="fw-bold">Blogs Management</span>
     </a>
+
+    <div class="d-flex align-items-center">
+      <button (click)="onLogout()" class="btn btn-outline-light btn-sm fw-bold px-3">
+        <i class="bi bi-box-arrow-right me-1"></i> Logout
+      </button>
+    </div>
+
   </div>
 </nav>

@@ -1,16 +1,15 @@
-<app-app-header></app-app-header>
+<app-header></app-header>
 
 <div class="container-fluid mt-3">
   <div class="row">
-    <div class="col-md-2">
-      <app-app-menu></app-app-menu>
+    <div class="col-md-3">
+      <!-- Phải là app-menu -->
+      <app-menu></app-menu>
     </div>
-
-    <div class="col-md-10">
-      <!-- RouterOutlet là nơi hiển thị BlogList hoặc BlogCreateEdit -->
+    <div class="col-md-9">
       <router-outlet></router-outlet>
     </div>
   </div>
 </div>
 
-<app-app-footer></app-app-footer>
+<app-footer></app-footer>

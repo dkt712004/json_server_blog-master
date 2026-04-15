@@ -1,0 +1,90 @@
+<div class="container-fluid p-4">
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-success text-white py-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <h3 class="mb-0 fw-bold">Quản lý Đơn hàng</h3>
+        <span class="badge bg-light text-success fs-6">Tổng số: {{ totalRecords }} đơn hàng</span>
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+          <tr>
+            <th class="ps-4">Mã ĐH</th>
+            <th>Ngày đặt</th>
+            <th>Khách hàng</th>
+            <th>Tổng tiền</th>
+            <th style="width: 200px;">Trạng thái</th>
+            <th class="text-center">Thao tác</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (order of orders; track order.id) {
+              <tr>
+                <td class="ps-4 fw-bold text-primary">#{{ order.orderNum }}</td>
+                <td>{{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <div class="fw-bold">{{ order.customerName }}</div>
+                  <small class="text-muted">{{ order.customerEmail }}</small>
+                </td>
+                <td class="text-danger fw-bold">
+                  {{ order.amount | number:'1.0-0' }} VNĐ
+                </td>
+                <td>
+                  <!-- Dropdown cập nhật trạng thái nhanh -->
+                  <select class="form-select form-select-sm border-2"
+                          [value]="order.status"
+                          [ngClass]="{
+                            'border-warning': order.status === 'NEW',
+                            'border-info': order.status === 'SHIPPING',
+                            'border-success': order.status === 'RECEIVED'
+                          }"
+                          (change)="changeStatus(order.id, $any($event.target).value)">
+                    <option value="NEW">Chưa xác nhận</option>
+                    <option value="CONFIRMED">Đã xác nhận</option>
+                    <option value="SHIPPING">Đang giao</option>
+                    <option value="RECEIVED">Đã nhận</option>
+                  </select>
+                </td>
+                <td class="text-center">
+                  <button class="btn btn-sm btn-info text-white px-3 shadow-sm" (click)="viewDetail(order.id)">
+                    <i class="bi bi-eye"></i> Xem chi tiết
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="text-center py-5 text-muted">
+                  <p class="fs-4 mb-0">Chưa có đơn hàng nào trong hệ thống.</p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    @if (totalPages > 1) {
+      <div class="card-footer bg-white py-4">
+        <nav>
+          <ul class="pagination justify-content-center mb-0">
+            @for (p of navigationPages; track p) {
+              <li class="page-item" [class.active]="p === currentPage" [class.disabled]="p === -1">
+                @if (p === -1) {
+                  <span class="page-link border-0">...</span>
+                } @else {
+                  <button class="page-link px-3 fw-bold" (click)="loadOrders(p)">{{ p }}</button>
+                }
+              </li>
+            }
+          </ul>
+        </nav>
+        <div class="text-center text-muted small mt-2">
+          Đang hiển thị trang {{ currentPage }} / {{ totalPages }}
+        </div>
+      </div>
+    }
+  </div>
+</div>

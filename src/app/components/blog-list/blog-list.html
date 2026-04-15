@@ -1,51 +1,85 @@
-<div class="container-fluid">
-  <h2 class="mb-4">List Blogs</h2>
+<div class="container-fluid p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-primary">DANH SÁCH SẢN PHẨM</h3>
+    <div class="text-muted">
+      Tổng số: <span class="badge bg-secondary">{{ totalRecords }}</span> sản phẩm
+    </div>
+  </div>
 
-  <div class="table-responsive">
-    <table class="table table-bordered table-hover align-middle text-center shadow-sm">
+  <div class="table-responsive shadow-sm rounded">
+    <table class="table table-bordered table-hover align-middle text-center mb-0 bg-white">
       <thead class="table-dark">
       <tr>
-        <th style="width: 60px;">STT</th>
-        <th class="text-start">Tin</th>
-        <th style="width: 120px;">Loại</th>
-        <th style="width: 100px;">Trạng thái</th>
-        <th style="width: 180px;">Vị trí</th>
-        <th style="width: 120px;">Ngày public</th>
-        <th style="width: 90px;">Edit</th>
-        <th style="width: 90px;">Delete</th>
+        <th style="width: 5%">STT</th>
+        <th style="width: 10%">Mã SP</th>
+        <th style="width: 25%">Tên sản phẩm</th>
+        <th style="width: 15%">Giá (VNĐ)</th>
+        <th style="width: 10%">Kho còn</th>
+        <th style="width: 15%">Hình ảnh</th>
+        <th style="width: 20%">Thao tác</th>
       </tr>
       </thead>
       <tbody>
-        @for (item of listBlogs; track item.id; let i = $index) {
+        @for (item of products; track item.code; let i = $index) {
           <tr>
-            <td class="fw-bold text-secondary">{{ i + 1 }}</td>
-
-            <td class="text-start">{{ item.title }}</td>
+            <td>{{ (currentPage - 1) * 5 + (i + 1) }}</td>
+            <td class="text-primary fw-bold">{{ item.code }}</td>
+            <td class="text-start ps-3">{{ item.name }}</td>
+            <td class="text-danger fw-bold">{{ item.price | number:'1.0-0' }}</td>
             <td>
-              @switch (item.category) {
-                @case (0) { <span>Thời sự</span> }
-                @case (1) { <span>Thế giới</span> }
-                @default { <span>Khác</span> }
+              @if (item.stock > 0) {
+                <span class="badge bg-success">Còn {{ item.stock }}</span>
+              } @else {
+                <span class="badge bg-danger">Hết hàng</span>
               }
             </td>
-            <td>{{ item.public ? 'Yes' : 'No' }}</td>
-            <td>{{ getPositionNames(item.position) }}</td>
-            <td>{{ item.data_pubblic }}</td>
             <td>
-              <a [routerLink]="['/blogs/edit', item.id]" class="btn btn-sm btn-outline-primary">Edit</a>
+              <img [src]="'http://localhost:8081/productImage?code=' + item.code"
+                   width="60" height="60"
+                   class="rounded border shadow-sm"
+                   alt="Product Image"
+                   onerror="this.src='no-image.jpg'">
             </td>
             <td>
-              <button class="btn btn-sm btn-outline-danger" (click)="onDelete(item.id)">
-                Delete
-              </button>
+              <div class="btn-group">
+                <a [routerLink]="['/blogs/edit', item.code]" class="btn btn-sm btn-outline-primary px-3">
+                  <i class="bi bi-pencil-square"></i> Sửa
+                </a>
+                <button class="btn btn-sm btn-outline-danger px-3" (click)="onDelete(item.code)">
+                  <i class="bi bi-trash"></i> Xóa
+                </button>
+              </div>
             </td>
           </tr>
         } @empty {
           <tr>
-            <td colspan="8" class="text-center p-5 text-muted">Danh sách trống.</td>
+            <td colspan="7" class="py-5 text-muted">
+              <div class="mb-2"><i class="bi bi-inbox fs-1"></i></div>
+              Không có dữ liệu sản phẩm để hiển thị.
+            </td>
           </tr>
         }
       </tbody>
     </table>
   </div>
+
+  <!-- THANH PHÂN TRANG (PAGINATION) -->
+  @if (totalPages > 1) {
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        @for (p of navigationPages; track p) {
+          <li class="page-item" [class.active]="p === currentPage" [class.disabled]="p === -1">
+            @if (p === -1) {
+              <span class="page-link border-0">...</span>
+            } @else {
+              <button class="page-link px-3" (click)="loadData(p)">{{ p }}</button>
+            }
+          </li>
+        }
+      </ul>
+      <div class="text-center text-muted small mt-2">
+        Trang {{ currentPage }} / {{ totalPages }}
+      </div>
+    </nav>
+  }
 </div>

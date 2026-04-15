@@ -11,31 +11,34 @@ import { BlogService } from '../../service/blog.service';
   templateUrl: './blog-search.html'
 })
 export class BlogSearchComponent {
-  listBlogs: any[] = [];
-  searchTerm: string = '';
-  positionMap: any = { 1: 'Việt Nam', 2: 'Châu Á', 3: 'Châu Âu', 4: 'Châu Mỹ' };
+  public listBlogs: any[] = [];
+  public searchTerm: string = '';
 
   constructor(private blogService: BlogService) {}
 
+  getPositionNames(pos: any): string {
+    const positionMap: any = {
+      1: 'Việt Nam', 2: 'Châu Á', 3: 'Châu Âu', 4: 'Châu Mỹ'
+    };
+    return positionMap[pos] || 'N/A';
+  }
+
   onSearch(): void {
-    if (this.searchTerm.trim()) {
-      this.blogService.searchBlogs(this.searchTerm).subscribe((res: any) => {
-        this.listBlogs = res;
+    if (this.searchTerm.trim() !== '') {
+      this.blogService.getList(1, this.searchTerm).subscribe((res: any) => {
+        this.listBlogs = res.list;
       });
+    } else {
+      this.listBlogs = [];
     }
   }
 
-  onDelete(id: number): void {
-    if (confirm('Bạn có chắc chắn muốn xóa bài viết này ngay tại trang tìm kiếm?')) {
-      this.blogService.delete(id).subscribe(() => {
-        alert('Xóa thành công!');
-        this.onSearch();
+  onDelete(code: string): void {
+    if (confirm('Xóa sản phẩm này?')) {
+      this.blogService.delete(code).subscribe(() => {
+        this.listBlogs = this.listBlogs.filter(blog => blog.code !== code);
+        alert('Đã xóa thành công!');
       });
     }
-  }
-
-  getPositionNames(posIds: any): string {
-    if (!posIds || !Array.isArray(posIds)) return '';
-    return posIds.map(id => this.positionMap[id]).filter(n => !!n).join(', ');
   }
 }

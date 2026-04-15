@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, Router, NavigationEnd } from '@angular/router';
 import { BlogService } from '../../service/blog.service';
-import { filter } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-blog-list',
@@ -11,45 +10,50 @@ import { filter } from 'rxjs';
   templateUrl: './blog-list.html',
   styleUrl: './blog-list.css'
 })
-export class BlogListComponent implements OnInit {
-  listBlogs: any[] = [];
-  positionMap: any = { 1: 'Việt Nam', 2: 'Châu Á', 3: 'Châu Âu', 4: 'Châu Mỹ' };
+export class BlogList implements OnInit {
 
-  constructor(private blogService: BlogService, private router: Router) {
-    this.router.events.pipe(
-      filter((event: any) => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      this.fetchData();
-    });
-  }
+  public products: any[] = [];
+  public totalRecords: number = 0;
+  public totalPages: number = 0;
+  public currentPage: number = 1;
+  public navigationPages: number[] = [];
+
+  constructor(private blogService: BlogService) {}
 
   ngOnInit(): void {
-    this.fetchData();
+    // Khi vừa vào trang, mặc định tải dữ liệu trang 1
+    this.loadData(1);
   }
 
-  fetchData(): void {
-    this.blogService.getList().subscribe((res: any) => {
-      this.listBlogs = res;
+  loadData(page: number = 1) {
+    this.currentPage = page;
+
+    this.blogService.getList(page).subscribe({
+      next: (res: any) => {
+        this.products = res.list;
+
+        this.totalRecords = res.totalRecords;
+        this.totalPages = res.totalPages;
+        this.navigationPages = res.navigationPages;
+
+        console.log('Dữ liệu phân trang:', res);
+      },
+      error: (err) => {
+        console.error('Lỗi khi lấy danh sách sản phẩm từ Java:', err);
+      }
     });
   }
 
-  onDelete(id: number): void {
-    if (confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
-      this.blogService.delete(id).subscribe({
-        next: () => {
-          this.listBlogs = this.listBlogs.filter(blog => blog.id !== id);
+  onDelete(code: string) {
+    if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
 
-          alert('Xóa thành công!');
+      this.blogService.delete(code).subscribe({
+        next: () => {
+          alert('Đã xóa thành công (Xóa mềm)!');
+          this.loadData();
         },
-        error: (err: any) => {
-          alert('Lỗi khi xóa: ' + err.message);
-        }
+        error: (err) => console.error(err)
       });
     }
-  }
-
-  getPositionNames(posIds: any): string {
-    if (!posIds || !Array.isArray(posIds)) return '';
-    return posIds.map(id => this.positionMap[id]).filter(n => !!n).join(', ');
   }
 }

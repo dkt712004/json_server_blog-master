@@ -1,62 +1,37 @@
-<div class="container-fluid">
-  <h2 class="mb-4">Search Blogs</h2>
-
-  <div class="row mb-4 align-items-center">
-    <div class="col-auto"><label class="fw-bold">Tiêu đề</label></div>
-    <div class="col-md-6">
-      <input type="text" class="form-control" [(ngModel)]="searchTerm"
-             placeholder="Nhập tiêu đề..." (keyup.enter)="onSearch()">
-    </div>
-    <div class="col-auto">
-      <button class="btn btn-success px-4" (click)="onSearch()">Search</button>
-    </div>
+<div class="container mt-4">
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Tìm theo tên sản phẩm..."
+           [(ngModel)]="searchTerm" (keyup.enter)="onSearch()">
+    <button class="btn btn-primary" (click)="onSearch()">Tìm kiếm</button>
   </div>
 
-  @if (listBlogs.length > 0) {
-    <div class="table-responsive">
-      <table class="table table-bordered text-center align-middle shadow-sm">
-        <thead class="table-dark">
+  <table class="table table-hover border">
+    <thead class="table-light">
+    <tr>
+      <th>Mã SP</th>
+      <th>Tên sản phẩm</th>
+      <th>Vị trí</th>
+      <th>Thao tác</th>
+    </tr>
+    </thead>
+    <tbody>
+      @if (listBlogs.length > 0) {
+        @for (item of listBlogs; track item.code; let i = $index) {
+          <tr>
+            <td>{{ item.code }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ getPositionNames(item.position) }}</td>
+            <td>
+              <a [routerLink]="['/blogs/edit', item.code]" class="btn btn-sm btn-info me-2">Sửa</a>
+              <button class="btn btn-sm btn-danger" (click)="onDelete(item.code)">Xóa</button>
+            </td>
+          </tr>
+        }
+      } @else {
         <tr>
-          <th style="width: 60px;">STT</th>
-          <th class="text-start">Tin</th>
-          <th>Loại</th>
-          <th>Trạng thái</th>
-          <th>Vị trí</th>
-          <th>Ngày public</th>
+          <td colspan="4" class="text-center p-4 text-muted">Nhập từ khóa để tìm kiếm sản phẩm...</td>
         </tr>
-        </thead>
-        <tbody>
-          @for (item of listBlogs; track item.id; let i = $index) {
-            <tr>
-              <!-- Số thứ tự tự động cập nhật -->
-              <td class="fw-bold">{{ i + 1 }}</td>
-              <td class="text-start">{{ item.title }}</td>
-              <td>
-                @switch (item.category) {
-                  @case (0) { <span>Thời sự</span> }
-                  @case (1) { <span>Thế giới</span> }
-                  @case (2) { <span>Kinh doanh</span> }
-                  @case (3) { <span>Giải trí</span> }
-                  @case (4) { <span>Thể thao</span> }
-                  @default { <span>Khác</span> }
-                }
-              </td>
-              <td>
-                <span [class.text-success]="item.public" [class.text-danger]="!item.public" class="fw-bold">
-                  {{ item.public ? 'Yes' : 'No' }}
-                </span>
-              </td>
-              <!-- Hiển thị tên Vị trí tiếng Việt -->
-              <td>{{ getPositionNames(item.position) }}</td>
-              <td>{{ item.data_pubblic }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  } @else if (searchTerm) {
-    <div class="alert alert-light border text-center p-4">
-      Không tìm thấy bài viết nào có tiêu đề: "<strong>{{ searchTerm }}</strong>"
-    </div>
-  }
+      }
+    </tbody>
+  </table>
 </div>

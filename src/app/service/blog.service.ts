@@ -1,37 +1,28 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-// đánh dấu là service, root => service duy nhất
-@Injectable({
-  providedIn: 'root'
-})
-export class BlogService {
-  private apiUrl = 'http://localhost:3000/blogs';
 
-  // tiêm sự phụ thuộc bằng constructor
+@Injectable({ providedIn: 'root' })
+export class BlogService {
+  private apiUrl = 'http://localhost:8081/api/products';
+
   constructor(private http: HttpClient) { }
 
-  getList(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  getList(page: number = 1, name: string = ''): Observable<any> {
+    let params = new HttpParams().set('page', page.toString()).set('name', name);
+    return this.http.get<any>(this.apiUrl, { params, withCredentials: true });
   }
 
-  getDetail(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}`);
+  getDetail(code: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${code}`, { withCredentials: true });
   }
 
-  searchBlogs(term: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}?title_like=${term}`);
+  save(formData: FormData): Observable<any> {
+    return this.http.post<any>(this.apiUrl, formData, { withCredentials: true });
   }
 
-  create(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
-  }
-
-  update(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, data);
-  }
-
-  delete(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  delete(code: string): Observable<any> {
+    const url = `${this.apiUrl}/${code.trim()}`;
+    return this.http.delete<any>(url, { withCredentials: true });
   }
 }
